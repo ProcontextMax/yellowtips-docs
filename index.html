@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Documentation · Yellow Tips</title>
+<meta name="description" content="Documentación técnica de las APIs de Yellow Tips. Endpoints, autenticación, ejemplos de código y referencia completa para integrar contexto verificado en tu agente.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🟡</text></svg>">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: #ffffff;
+  }
+
+  /* Layout */
+  .layout { display: flex; min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 260px;
+    background: #fafafa;
+    border-right: 1px solid #eee;
+    padding: 24px 0;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  .sidebar-header {
+    padding: 0 24px 20px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px;
+  }
+  .sidebar-header a {
+    font-weight: 800;
+    font-size: 1.1em;
+    color: #1a1a1a;
+    text-decoration: none;
+  }
+  .sidebar-header a::before { content: "🟡 "; }
+  .sidebar-header .tagline {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 4px;
+  }
+  .sidebar-section {
+    padding: 0 24px;
+    margin-bottom: 24px;
+  }
+  .sidebar-section h4 {
+    font-size: 0.75em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+    margin-bottom: 8px;
+  }
+  .sidebar-section a {
+    display: block;
+    padding: 6px 0;
+    color: #555;
+    text-decoration: none;
+    font-size: 0.9em;
+  }
+  .sidebar-section a:hover { color: #1a1a1a; font-weight: 500; }
+
+  /* Main */
+  .main {
+    margin-left: 260px;
+    flex: 1;
+    padding: 40px 60px;
+    max-width: 900px;
+  }
+  .main h1 {
+    font-size: 2.2em;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+  .main h2 {
+    font-size: 1.6em;
+    font-weight: 700;
+    margin-top: 48px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #FFC300;
+  }
+  .main h3 {
+    font-size: 1.2em;
+    font-weight: 700;
+    margin-top: 32px;
+    margin-bottom: 12px;
+  }
+  .main p { margin-bottom: 16px; color: #444; }
+  .main ul { margin-left: 24px; margin-bottom: 16px; }
+  .main li { margin-bottom: 6px; color: #444; }
+  .main a { color: #0066cc; }
+
+  .lead {
+    font-size: 1.15em;
+    color: #666;
+    margin-bottom: 32px;
+  }
+
+  /* Code */
+  code {
+    background: #f4f4f4;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'SF Mono', Monaco, Consolas, monospace;
+    font-size: 0.9em;
+    color: #d63384;
+  }
+  pre {
+    background: #1a1a1a;
+    color: #f8f8f2;
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 16px 0;
+    font-family: 'SF Mono', Monaco, Consolas, monospace;
+    font-size: 0.9em;
+    line-height: 1.5;
+  }
+  pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+    font-size: inherit;
+  }
+  .pre-label {
+    display: inline-block;
+    background: #FFC300;
+    color: #1a1a1a;
+    padding: 2px 10px;
+    border-radius: 4px 4px 0 0;
+    font-size: 0.75em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: -16px;
+    position: relative;
+    top: 8px;
+  }
+
+  /* Endpoint */
+  .endpoint {
+    background: #fafafa;
+    border-left: 4px solid #FFC300;
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin: 24px 0;
+    font-family: monospace;
+    font-size: 1em;
+  }
+  .endpoint .method {
+    background: #1a1a1a;
+    color: #FFC300;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 0.85em;
+    margin-right: 8px;
+  }
+
+  /* Table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 0.95em;
+  }
+  th {
+    background: #f4f4f4;
+    text-align: left;
+    padding: 10px 12px;
+    font-weight: 700;
+    border-bottom: 2px solid #ddd;
+  }
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+    color: #444;
+  }
+
+  /* Alert */
+  .alert {
+    background: #FFF9E6;
+    border-left: 4px solid #FFC300;
+    padding: 16px 20px;
+    border-radius: 6px;
+    margin: 20px 0;
+  }
+  .alert strong { color: #1a1a1a; }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <a href="https://yellowtips.com">Yellow Tips</a>
+      <div class="tagline">API Documentation</div>
+    </div>
+
+    <div class="sidebar-section">
+      <h4>Getting started</h4>
+      <a href="#quickstart">Quick start</a>
+      <a href="#auth">Authentication</a>
+    </div>
+
+    <div class="sidebar-section">
+      <h4>Endpoints</h4>
+      <a href="#health">GET /health</a>
+      <a href="#verify-citation">POST /v1/legal/verify-citation</a>
+    </div>
+
+    <div class="sidebar-section">
+      <h4>Reference</h4>
+      <a href="#errors">Error codes</a>
+      <a href="#jurisdictions">Jurisdictions</a>
+    </div>
+
+    <div class="sidebar-section">
+      <h4>Links</h4>
+      <a href="https://yellowtips.com">← Back to site</a>
+      <a href="https://github.com/ProcontextMax">GitHub</a>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <h1>API Documentation</h1>
+    <p class="lead">Context APIs for AI agents in LATAM & Spain. This guide covers authentication, endpoints, and error handling.</p>
+
+    <h2 id="quickstart">Quick start</h2>
+    <p>Make your first request in 30 seconds.</p>
+
+    <div class="pre-label">cURL</div>
+    <pre><code>curl https://api.yellowtips.com/health</code></pre>
+
+    <p>You should see:</p>
+
+    <pre><code>{"status":"success","data":{"service":"yellowtips-api","version":"0.2.0"}}</code></pre>
+
+    <h2 id="auth">Authentication</h2>
+    <p>All endpoints under <code>/v1/*</code> require an API key in the <code>X-API-Key</code> header.</p>
+
+    <pre><code>X-API-Key: yt_live_abc123...</code></pre>
+
+    <div class="alert">
+      <strong>Don't have a key?</strong> Request one at <a href="https://yellowtips.com">yellowtips.com</a> — the Free plan includes 100 calls/month without a credit card.
+    </div>
+
+    <h2 id="health">GET /health</h2>
+    <p>Returns the service status. No authentication required.</p>
+
+    <div class="endpoint">
+      <span class="method">GET</span> /health
+    </div>
+
+    <div class="pre-label">Response</div>
+    <pre><code>{
+  "status": "success",
+  "data": {
+    "service": "yellowtips-api",
+    "version": "0.2.0"
+  }
+}</code></pre>
+
+    <h2 id="verify-citation">POST /v1/legal/verify-citation</h2>
+    <p>Verifies a legal citation in three layers: <strong>existence</strong>, <strong>relevance</strong> and <strong>temporality</strong> (dead law detection).</p>
+
+    <div class="endpoint">
+      <span class="method">POST</span> /v1/legal/verify-citation
+    </div>
+
+    <h3>Headers</h3>
+    <table>
+      <tr>
+        <th>Header</th>
+        <th>Required</th>
+        <th>Value</th>
+      </tr>
+      <tr>
+        <td><code>X-API-Key</code></td>
+        <td>Yes</td>
+        <td>Your API key (starts with <code>yt_live_</code>)</td>
+      </tr>
+      <tr>
+        <td><code>Content-Type</code></td>
+        <td>Yes</td>
+        <td><code>application/json</code></td>
+      </tr>
+    </table>
+
+    <h3>Request body</h3>
+    <table>
+      <tr>
+        <th>Field</th>
+        <th>Type</th>
+        <th>Required</th>
+        <th>Description</th>
+      </tr>
+      <tr>
+        <td><code>citation</code></td>
+        <td>string</td>
+        <td>Yes</td>
+        <td>The citation to verify (e.g. "Sentencia C-567 de 2019")</td>
+      </tr>
+      <tr>
+        <td><code>jurisdiction</code></td>
+        <td>string</td>
+        <td>Yes</td>
+        <td>One of: MX, CO, AR, CL, PE, ES</td>
+      </tr>
+      <tr>
+        <td><code>proposition</code></td>
+        <td>string</td>
+        <td>No</td>
+        <td>The legal proposition the citation is supposed to support</td>
+      </tr>
+    </table>
+
+    <div class="pre-label">Example request</div>
+    <pre><code>curl -X POST https://api.yellowtips.com/v1/legal/verify-citation \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: yt_live_abc123..." \
+  -d '{
+    "citation": "Sentencia C-1234 de 2014",
+    "jurisdiction": "CO",
+    "proposition": "derecho de retracto"
+  }'</code></pre>
+
+    <div class="pre-label">Success response — dead law detected</div>
+    <pre><code>{
+  "status": "success",
+  "data": {
+    "citation": "Sentencia C-1234 de 2014",
+    "jurisdiction": "CO",
+    "citation_id": "C-1234-2014",
+    "citation_text": "Sentencia C-1234 de 2014",
+    "court": "Corte Constitucional",
+    "year": 2014,
+    "existence_check": "confirmed",
+    "relevance_check": "unverified",
+    "temporality_check": "dead_law",
+    "superseded_by": "C-567-2019",
+    "overall_confidence": "low",
+    "note": "Derogada por Sentencia C-567 de 2019",
+    "plan": "free",
+    "timestamp": "2026-10-23T18:34:37.858Z"
+  }
+}</code></pre>
+
+    <div class="pre-label">Success response — valid citation</div>
+    <pre><code>{
+  "status": "success",
+  "data": {
+    "citation": "Sentencia C-567 de 2019",
+    "citation_id": "C-567-2019",
+    "existence_check": "confirmed",
+    "relevance_check": "likely_relevant",
+    "temporality_check": "valid",
+    "overall_confidence": "high",
+    "note": "Vigente. Reemplaza a C-1234 de 2014"
+  }
+}</code></pre>
+
+    <div class="pre-label">Partial response — citation not in database</div>
+    <pre><code>{
+  "status": "partial",
+  "data": {
+    "citation": "Sentencia X-9999 de 2020",
+    "existence_check": "not_found",
+    "temporality_check": "unknown",
+    "overall_confidence": "low",
+    "error": {
+      "code": "E_CITATION_NOT_FOUND",
+      "message": "Citation not found in our database..."
+    }
+  }
+}</code></pre>
+
+    <div class="alert">
+      <strong>Note:</strong> a <code>not_found</code> result does not mean the citation doesn't exist — it means our coverage is limited. We never fabricate a "valid" response when we can't verify.
+    </div>
+
+    <h2 id="errors">Error codes</h2>
+    <table>
+      <tr>
+        <th>Code</th>
+        <th>HTTP</th>
+        <th>Meaning</th>
+      </tr>
+      <tr>
+        <td><code>E400</code></td>
+        <td>400</td>
+        <td>Missing or invalid request fields</td>
+      </tr>
+      <tr>
+        <td><code>E401</code></td>
+        <td>401</td>
+        <td>Invalid or missing API key</td>
+      </tr>
+      <tr>
+        <td><code>E404</code></td>
+        <td>404</td>
+        <td>Endpoint not found</td>
+      </tr>
+      <tr>
+        <td><code>E500</code></td>
+        <td>400</td>
+        <td>Invalid JSON body</td>
+      </tr>
+      <tr>
+        <td><code>E_CITATION_NOT_FOUND</code></td>
+        <td>200 (partial)</td>
+        <td>Citation not found in our database</td>
+      </tr>
+    </table>
+
+    <h2 id="jurisdictions">Jurisdictions</h2>
+    <p>Currently supported:</p>
+    <ul>
+      <li><strong>MX</strong> — Mexico</li>
+      <li><strong>CO</strong> — Colombia</li>
+      <li><strong>AR</strong> — Argentina</li>
+      <li><strong>CL</strong> — Chile</li>
+      <li><strong>PE</strong> — Peru</li>
+      <li><strong>ES</strong> — Spain</li>
+    </ul>
+
+    <p>More LATAM countries coming soon.</p>
+
+  </main>
+
+</div>
+
+</body>
+</html>
