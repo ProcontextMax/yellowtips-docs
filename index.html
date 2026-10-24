@@ -220,6 +220,7 @@
       <h4>Endpoints</h4>
       <a href="#health">GET /health</a>
       <a href="#verify-citation">POST /v1/legal/verify-citation</a>
+      <a href="#legal-search">GET /v1/legal/search</a>
     </div>
 
     <div class="sidebar-section">
@@ -248,7 +249,7 @@
 
     <p>You should see:</p>
 
-    <pre><code>{"status":"success","data":{"service":"yellowtips-api","version":"0.2.0"}}</code></pre>
+    <pre><code>{"status":"success","data":{"service":"yellowtips-api","version":"0.3.0"}}</code></pre>
 
     <h2 id="auth">Authentication</h2>
     <p>All endpoints under <code>/v1/*</code> require an API key in the <code>X-API-Key</code> header.</p>
@@ -271,7 +272,7 @@
   "status": "success",
   "data": {
     "service": "yellowtips-api",
-    "version": "0.2.0"
+    "version": "0.3.0"
   }
 }</code></pre>
 
@@ -393,6 +394,98 @@
       <strong>Note:</strong> a <code>not_found</code> result does not mean the citation doesn't exist — it means our coverage is limited. We never fabricate a "valid" response when we can't verify.
     </div>
 
+    <h2 id="legal-search">GET /v1/legal/search</h2>
+    <p>Full-text search across our jurisprudence database with BM25 relevance ranking, powered by SQLite FTS5. Results include a <code>snippet</code> with matching terms wrapped in <code>&lt;mark&gt;</code> tags — ready to render.</p>
+
+    <div class="endpoint">
+      <span class="method">GET</span> /v1/legal/search
+    </div>
+
+    <h3>Headers</h3>
+    <table>
+      <tr>
+        <th>Header</th>
+        <th>Required</th>
+        <th>Value</th>
+      </tr>
+      <tr>
+        <td><code>X-API-Key</code></td>
+        <td>Yes</td>
+        <td>Your API key (starts with <code>yt_live_</code>)</td>
+      </tr>
+    </table>
+
+    <h3>Query parameters</h3>
+    <table>
+      <tr>
+        <th>Param</th>
+        <th>Type</th>
+        <th>Required</th>
+        <th>Description</th>
+      </tr>
+      <tr>
+        <td><code>q</code></td>
+        <td>string</td>
+        <td>Yes</td>
+        <td>Search query. Multi-word queries are matched as exact phrases. Special characters are sanitized.</td>
+      </tr>
+      <tr>
+        <td><code>tipo</code></td>
+        <td>string</td>
+        <td>No</td>
+        <td>Filter by ruling type: <code>T</code> (tutela), <code>C</code> (constitutionality), <code>SU</code> (unification)</td>
+      </tr>
+      <tr>
+        <td><code>limit</code></td>
+        <td>integer</td>
+        <td>No</td>
+        <td>Max results (1–20, default 10)</td>
+      </tr>
+    </table>
+
+    <div class="pre-label">Example request</div>
+    <pre><code>curl "https://api.yellowtips.com/v1/legal/search?q=despido%20sin%20justa%20causa&limit=3" \
+  -H "X-API-Key: yt_live_abc123..."</code></pre>
+
+    <div class="pre-label">Success response</div>
+    <pre><code>{
+  "status": "success",
+  "data": {
+    "query": "despido sin justa causa",
+    "fts_query": "\"despido sin justa causa\"",
+    "tipo": null,
+    "limit": 3,
+    "count": 3,
+    "plan": "pro",
+    "results": [
+      {
+        "id": "T-123-26",
+        "titulo": "Sentencia T-123/26 – Tutela",
+        "fecha": "2026-05-07",
+        "ponente": "Lina Marcela Escobar Martínez",
+        "tipo": "T",
+        "tipo_proceso": "Tutela",
+        "fuente_url": "https://www.corteconstitucional.gov.co/relatoria/2026/T-123-26.htm",
+        "snippet": "...<mark>despido sin justa causa</mark>...",
+        "rank": -4.115677207344352
+      }
+    ],
+    "timestamp": "2026-10-24T15:44:26.100Z"
+  }
+}</code></pre>
+
+    <h3>Rendering snippets</h3>
+    <p>The <code>snippet</code> field contains <code>&lt;mark&gt;</code> tags around matching terms. Render it as HTML to highlight results:</p>
+    <pre><code>&lt;p dangerouslySetInnerHTML={{ __html: result.snippet }} /&gt;
+// → "...<mark>despido sin justa causa</mark>..."</code></pre>
+
+    <h3>Relevance ranking</h3>
+    <p>Results are ordered by <code>rank</code> (BM25 score). More negative = more relevant. Use it only to sort results within a single query — do not compare <code>rank</code> values across queries.</p>
+
+    <div class="alert">
+      <strong>Coverage:</strong> currently <strong>184 tutelas (type T)</strong> from 2026 are fully searchable. C and SU rulings are in progress.
+    </div>
+
     <h2 id="errors">Error codes</h2>
     <table>
       <tr>
@@ -424,6 +517,11 @@
         <td><code>E_CITATION_NOT_FOUND</code></td>
         <td>200 (partial)</td>
         <td>Citation not found in our database</td>
+      </tr>
+      <tr>
+        <td><code>E429</code></td>
+        <td>429</td>
+        <td>Monthly quota exceeded for your plan</td>
       </tr>
     </table>
 
