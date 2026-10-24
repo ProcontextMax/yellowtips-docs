@@ -227,6 +227,7 @@
       <h4>Reference</h4>
       <a href="#errors">Error codes</a>
       <a href="#jurisdictions">Jurisdictions</a>
+      <a href="#casos-laboral">Casos de uso: Laboral</a>
     </div>
 
     <div class="sidebar-section">
@@ -483,7 +484,108 @@
     <p>Results are ordered by <code>rank</code> (BM25 score). More negative = more relevant. Use it only to sort results within a single query — do not compare <code>rank</code> values across queries.</p>
 
     <div class="alert">
-      <strong>Coverage:</strong> currently <strong>184 tutelas (type T)</strong> from 2026 are fully searchable. C and SU rulings are in progress.
+      <strong>Coverage:</strong> currently <strong>1,308 tutelas (type T)</strong> from 2023–2026 are fully searchable. C and SU rulings are in progress.
+    </div>
+
+    <h2 id="casos-laboral">Casos de uso: Derecho Laboral</h2>
+    <p>El corpus está especialmente denso en temas laborales. Estas son las coberturas reales sobre las <strong>1.308 tutelas de la Corte Constitucional</strong> indexadas (2023–2026):</p>
+
+    <table>
+      <tr>
+        <th>Tema</th>
+        <th>Sentencias</th>
+        <th>Query sugerida</th>
+      </tr>
+      <tr>
+        <td>Discapacidad</td>
+        <td><strong>656</strong></td>
+        <td><code>discapacidad</code></td>
+      </tr>
+      <tr>
+        <td>Contrato</td>
+        <td><strong>595</strong></td>
+        <td><code>contrato</code></td>
+      </tr>
+      <tr>
+        <td>Estabilidad laboral</td>
+        <td><strong>512</strong></td>
+        <td><code>estabilidad</code></td>
+      </tr>
+      <tr>
+        <td>Trabajador</td>
+        <td><strong>361</strong></td>
+        <td><code>trabajador</code></td>
+      </tr>
+      <tr>
+        <td>Embarazo</td>
+        <td><strong>241</strong></td>
+        <td><code>embarazo</code></td>
+      </tr>
+      <tr>
+        <td>Acoso laboral</td>
+        <td><strong>175</strong></td>
+        <td><code>acoso</code></td>
+      </tr>
+      <tr>
+        <td>Fuero</td>
+        <td><strong>162</strong></td>
+        <td><code>fuero</code></td>
+      </tr>
+      <tr>
+        <td>Despido</td>
+        <td><strong>142</strong></td>
+        <td><code>despido</code></td>
+      </tr>
+      <tr>
+        <td>Pensión</td>
+        <td><strong>126</strong></td>
+        <td><code>pension</code></td>
+      </tr>
+      <tr>
+        <td>Fuero sindical</td>
+        <td><strong>72</strong></td>
+        <td><code>sindical</code></td>
+      </tr>
+    </table>
+
+    <h3>Ejemplo: estabilidad laboral reforzada</h3>
+    <div class="pre-label">Request</div>
+    <pre><code>curl "https://api.yellowtips.com/v1/legal/search?q=estabilidad%20laboral%20reforzada&limit=3" \
+  -H "X-API-Key: yt_live_abc123..."</code></pre>
+
+    <div class="pre-label">Response</div>
+    <pre><code>{
+  "status": "success",
+  "data": {
+    "query": "estabilidad laboral reforzada",
+    "fts_query": "\"estabilidad laboral reforzada\"",
+    "count": 3,
+    "results": [
+      {
+        "id": "T-XXX-25",
+        "titulo": "Sentencia T-XXX/25 – Tutela",
+        "fecha": "2025-XX-XX",
+        "ponente": "...",
+        "tipo": "T",
+        "snippet": "...<mark>estabilidad laboral reforzada</mark>...",
+        "fuente_url": "https://www.corteconstitucional.gov.co/relatoria/2025/T-XXX-25.htm"
+      }
+    ]
+  }
+}</code></pre>
+
+    <h3>Ejemplo: despido de mujer embarazada</h3>
+    <div class="pre-label">Request</div>
+    <pre><code>curl "https://api.yellowtips.com/v1/legal/search?q=despido%20mujer%20embarazada&limit=3" \
+  -H "X-API-Key: yt_live_abc123..."</code></pre>
+
+    <h3>Ejemplo: fuero sindical</h3>
+    <div class="pre-label">Request</div>
+    <pre><code>curl "https://api.yellowtips.com/v1/legal/search?q=fuero%20sindical&limit=3" \
+  -H "X-API-Key: yt_live_abc123..."</code></pre>
+
+    <div class="alert">
+      <strong>¿Construyes una LegalTech laboral?</strong> Escríbenos a <a href="mailto:mvx555@gmail.com">mvx555@gmail.com</a> para acceso beta gratuito y descuento de fundador.
     </div>
 
     <h2 id="errors">Error codes</h2>
