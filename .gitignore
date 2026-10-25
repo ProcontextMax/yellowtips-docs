@@ -3,3 +3,5 @@ node_modules/
 *.log
 .wrangler/
 index.html.backup
+*.ps1
+*.bak2
