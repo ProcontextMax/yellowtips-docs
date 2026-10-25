@@ -220,7 +220,8 @@
       <h4>Endpoints</h4>
       <a href="#health">GET /health</a>
       <a href="#verify-citation">POST /v1/legal/verify-citation</a>
-      <a href="#legal-search">GET /v1/legal/search</a>
+            <a href="#legal-search">GET /v1/legal/search</a>
+      <a href="#legal-argument">GET /v1/legal/argument</a>
     </div>
 
     <div class="sidebar-section">
@@ -394,6 +395,96 @@
     <div class="alert">
       <strong>Note:</strong> a <code>not_found</code> result does not mean the citation doesn't exist — it means our coverage is limited. We never fabricate a "valid" response when we can't verify.
     </div>
+
+        <h2 id="legal-argument">GET /v1/legal/argument</h2>
+    <p>Extract structured legal reasoning. This endpoint returns the core <code>problema_juridico</code>, the <code>ratio_decidendi</code>, and the exact <code>decision_texto</code> (what was ordered). It supports automatic query expansion to match Spanish accents.</p>
+
+    <div class="endpoint">
+      <span class="method">GET</span> /v1/legal/argument
+    </div>
+
+    <h3>Headers</h3>
+    <table>
+      <tr>
+        <th>Header</th>
+        <th>Required</th>
+        <th>Value</th>
+      </tr>
+      <tr>
+        <td><code>X-API-Key</code></td>
+        <td>Yes</td>
+        <td>Your API key (starts with <code>yt_live_</code>)</td>
+      </tr>
+    </table>
+
+    <h3>Query parameters</h3>
+    <table>
+      <tr>
+        <th>Param</th>
+        <th>Type</th>
+        <th>Required</th>
+        <th>Description</th>
+      </tr>
+      <tr>
+        <td><code>q</code></td>
+        <td>string</td>
+        <td>Yes</td>
+        <td>Search query. Words of 6+ letters are automatically expanded (e.g., "pension" matches "pensiones" and "pensión").</td>
+      </tr>
+      <tr>
+        <td><code>sentido</code></td>
+        <td>string</td>
+        <td>No</td>
+        <td>Filter by decision outcome: <code>concede</code>, <code>niega</code>, <code>modula</code>, <code>mixto</code>, or <code>indeterminado</code>.</td>
+      </tr>
+      <tr>
+        <td><code>derecho</code></td>
+        <td>string</td>
+        <td>No</td>
+        <td>Filter by affected right (e.g., <code>pension</code>, <code>estabilidad</code>, <code>discapacidad</code>, <code>salud</code>).</td>
+      </tr>
+      <tr>
+        <td><code>limit</code></td>
+        <td>integer</td>
+        <td>No</td>
+        <td>Max results (1–20, default 10)</td>
+      </tr>
+    </table>
+
+    <div class="pre-label">Example request</div>
+    <pre><code>curl "https://api.yellowtips.com/v1/legal/argument?q=pension&sentido=concede&limit=2" \
+  -H "X-API-Key: yt_live_abc123..."</code></pre>
+
+    <div class="pre-label">Success response</div>
+    <pre><code>{
+  "status": "success",
+  "data": {
+    "query": "pension",
+    "fts_query": "pensi*",
+    "filters": {
+      "sentido": "concede",
+      "derecho": null
+    },
+    "limit": 2,
+    "count": 1,
+    "plan": "pro",
+    "results": [
+      {
+        "id": "T-334-24",
+        "sentido": "concede",
+        "derechos": "[\"discapacidad\",\"pension\",\"salud\"]",
+        "problema_juridico": "en resolver si: Colpensiones vulneró los derechos...",
+        "ratio_decidendi": "",
+        "decision_texto": "Primero. REVOCAR la Sentencia proferida el 17 de enero...",
+        "snippet_problema": "...la <mark>pensi</mark>ón de sobrevivientes...",
+        "titulo": "Sentencia T-334/24 – Tutela",
+        "fecha": "2024-08-12",
+        "ponente": "Diana Constanza Fajardo Rivera",
+        "fuente_url": "https://www.corteconstitucional.gov.co/relatoria/2024/T-334-24.htm"
+      }
+    ]
+  }
+}</code></pre>
 
     <h2 id="legal-search">GET /v1/legal/search</h2>
     <p>Full-text search across our jurisprudence database with BM25 relevance ranking, powered by SQLite FTS5. Results include a <code>snippet</code> with matching terms wrapped in <code>&lt;mark&gt;</code> tags — ready to render.</p>
