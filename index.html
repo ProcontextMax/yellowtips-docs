@@ -575,11 +575,11 @@
     <p>Results are ordered by <code>rank</code> (BM25 score). More negative = more relevant. Use it only to sort results within a single query — do not compare <code>rank</code> values across queries.</p>
 
     <div class="alert">
-      <strong>Coverage:</strong> currently <strong>1,308 tutelas (type T)</strong> from 2023–2026 are fully searchable. C and SU rulings are in progress.
+      <strong>Coverage:</strong> currently <strong><span class="yt-doc-total">1.428</span> tutelas (type T)</strong> from 2023–2026 are fully searchable. C and SU rulings are in progress.
     </div>
 
     <h2 id="casos-laboral">Casos de uso: Derecho Laboral</h2>
-    <p>El corpus está especialmente denso en temas laborales. Estas son las coberturas reales sobre las <strong>1.308 tutelas de la Corte Constitucional</strong> indexadas (2023–2026):</p>
+    <p>El corpus está especialmente denso en temas laborales. Estas son las coberturas reales sobre las <strong><span class="yt-doc-total">1.428</span> tutelas de la Corte Constitucional</strong> indexadas (2023–2026):</p>
 
     <table>
       <tr>
@@ -730,7 +730,7 @@
       <tr>
         <td><strong>CO</strong> — Colombia</td>
         <td><strong>Available</strong></td>
-        <td>1,308 tutelas (2023–2026) · 305 verifiable citations</td>
+        <td><span class="yt-doc-total">1.428</span> tutelas (2023–2026) · <span class="yt-doc-citations">305</span> verifiable citations</td>
       </tr>
       <tr>
         <td><strong>MX</strong> — Mexico</td>
@@ -767,5 +767,5 @@
 
 </div>
 
-</body>
+<script id="yt-docs-health-fetch">(function(){fetch("https://api.yellowtips.com/health").then(function(r){return r.json();}).then(function(d){var total=d&&d.data&&d.data.corpus&&d.data.corpus.total;var cit=d&&d.data&&d.data.citations&&d.data.citations.total;if(total){var t=total.toLocaleString("es-CO");document.querySelectorAll(".yt-doc-total").forEach(function(el){el.textContent=t;});}if(cit){var c2=cit.toLocaleString("es-CO");document.querySelectorAll(".yt-doc-citations").forEach(function(el){el.textContent=c2;});}}).catch(function(){});})();</script></body>
 </html>
